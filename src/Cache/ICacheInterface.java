@@ -1,6 +1,6 @@
 package Cache;
 
-import Exception.KeyNotFoundException;
+import Cache.Exception.KeyNotFoundException;
 
 import java.io.IOException;
 
@@ -17,18 +17,7 @@ public interface ICacheInterface {
      * @return The value associated with the key
      * @throws KeyNotFoundException if key does not exist.
      */
-    String get(String key) throws KeyNotFoundException;
-
-    /**
-     * Return the value of key passed as argument. Otherwise, return the
-     * default value passed as second argument.
-     * @param key Key to look for
-     * @param defaultValue Value returned when key does not exist.
-     * @return The value associated with the key or the defaultValue if key was not
-    found.
-     */
-    String getOrDefault(String key, String defaultValue);
-
+    String read(String key) throws KeyNotFoundException;
 
     /**
      * Check is a key exists in cache.
@@ -36,13 +25,15 @@ public interface ICacheInterface {
      * @return True if key exists.
      */
     boolean exists(String key);
+
     /**
      * Add or update the value associated to a key.
-     * @param key Key to be stored.
+     *
+     * @param key   Key to be stored.
      * @param value Value to be stored.
      * @throws IOException the key already exists.
      */
-    void put(String key, String value) throws IOException;
+    void update(String key, String value) throws IOException;
     /**
      * Add a value to a new key. If key already exists, it throws an exception.
      * @param key Key to be stored.

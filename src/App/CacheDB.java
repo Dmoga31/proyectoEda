@@ -5,21 +5,24 @@ import picocli.CommandLine.Command;
 import picocli.CommandLine.Parameters;
 import java.io.IOException;
 import java.util.concurrent.Callable;
-import Exception.KeyNotFoundException;
-import Exception.DuplicatedKeyException;
+import Cache.Exception.KeyNotFoundException;
+import Cache.Exception.DuplicatedKeyException;
 
 
 @Command (
-        name = "Cache Controller",
-        version = "CacheC 1.0",
+        name = "java -jar eda_cache.jar",
+        version = "CacheController 1.0",
         mixinStandardHelpOptions = true,
-        synopsisHeading = "%n@|bold,blue,underline Usage|@:%n",
         descriptionHeading = "%n@|bold,red,underline Description|@:%n",
+        synopsisHeading = "%n@|bold,blue,underline Usage|@:%n",
         optionListHeading = "%n@|bold,yellow,underline Options|@:%n",
         commandListHeading = "%n@|bold,green,underline Commands|@:%n",
         description = "Cache Controller is a simple database that stores key-value pairs in memory."
 )
+
+
 public class CacheDB implements Callable<Integer> {
+
     @Command(name="getAll", description = "Get all keys")
     public Integer getAll() throws Exception {
         ICache cache = new ICache();
@@ -35,24 +38,41 @@ public class CacheDB implements Callable<Integer> {
         }
     }
 
-
-    @Command(name="get", description = "Get a value")
-    public Integer get(@Parameters(arity = "1", paramLabel = "Key",description = "The key") String key) throws IOException, KeyNotFoundException {
+    @Command(name="readAll", description = "Reads all the keys in the cache")
+    public Integer readAll() throws Exception {
         ICache cache = new ICache();
         try {
-            System.out.println(cache.get(key));
+            String[] keys = cache.getAll();
+            for (String key : keys) {
+                System.out.println(key + ": " + cache.read(key));
+            }
             return 0;
         } catch (Exception e) {
             System.out.println(e.getMessage());
             return -1;
+        } catch (KeyNotFoundException e) {
+            throw new RuntimeException(e);
         }
-
     }
 
-    @Command(name = "add", description = "Add the value associated to a key.")
+
+    @Command(name="read", description = "Reads the value associated with the key passed as argument.")
+    public Integer read(@Parameters(arity = "1", paramLabel = "Key",description = "Key that will be read") String key) throws IOException, KeyNotFoundException {
+        ICache cache = new ICache();
+        for (String k : cache.getAll()) {
+            if (k.equals(key)) {
+                System.out.println(cache.read(key));
+            }
+        }
+        return 0;
+    }
+
+
+
+    @Command(name = "add", description = "Create a new key-\"value\" pair.")
     public Integer add(
-            @Parameters(arity = "1", paramLabel = "Key", description = "Key to use in the command.") String key,
-            @Parameters(arity = "1", paramLabel = "Value", description = "Value to use in the command.") String value) throws IOException, DuplicatedKeyException {
+            @Parameters(arity = "1", paramLabel = "Key", description = "Key that will store in the cache") String key,
+            @Parameters(arity = "1", paramLabel = "\"Value\"" , description = "Value that will be in the key. Value has to be with apostrophes.") String value) throws IOException, DuplicatedKeyException {
         ICache cache = new ICache();
         try {
             cache.addNew(key, value);
@@ -66,13 +86,13 @@ public class CacheDB implements Callable<Integer> {
 
 
 
-    @Command(name = "put", description = "Updates the value associated to a key. Value must have apostrophes.")
-    public Integer put(
-            @Parameters(arity = "1", paramLabel = "Key", description = "Key to use in the command.") String key,
-            @Parameters(arity = "1", paramLabel = "Value", description = "Value to use in the command.") String value) throws IOException {
+    @Command(name = "update", description = "Updates the value associated to a key. Value must have apostrophes.")
+    public Integer update(
+            @Parameters(arity = "1", paramLabel = "Key", description = "Key that will be changed") String key,
+            @Parameters(arity = "1", paramLabel = "New Value", description = "new Value in the Key") String value) throws IOException {
         ICache cache = new ICache();
         try {
-            cache.put(key, value);
+            cache.update(key, value);
             System.out.println(key + " updated with " + value);
             return 0;
         } catch (Exception e) {
@@ -82,7 +102,7 @@ public class CacheDB implements Callable<Integer> {
     }
 
     @Command(name = "remove", description = "Delete a key")
-    public Integer remove(@Parameters(arity = "1", paramLabel = "Key", description = "Key to use in command") String key) throws IOException, KeyNotFoundException {
+    public Integer remove(@Parameters(arity = "1", paramLabel = "Key", description = "Key that will be deleted") String key) throws IOException, KeyNotFoundException {
         ICache cache = new ICache();
         try {
             cache.remove(key);
@@ -93,11 +113,11 @@ public class CacheDB implements Callable<Integer> {
         }
     }
 
-    @Command(name = "size", description = "Get the size of the cache")
+    @Command(name = "size", description = "Gets the size of the cache")
     public Integer size() throws IOException {
         ICache cache = new ICache();
         try {
-            System.out.println(cache.size());
+            System.out.println("There are "+ cache.size() + " keys in the cache");
             return 0;
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -107,7 +127,7 @@ public class CacheDB implements Callable<Integer> {
 
 
     @Command(name="exists", description = "Check if a key exist")
-    public Integer exist(@Parameters(arity = "1", paramLabel = "Key",description = "The key") String key) throws IOException, KeyNotFoundException {
+    public Integer exists(@Parameters(arity = "1", paramLabel = "Key",description = "Key to use in command") String key) throws IOException {
         ICache cache = new ICache();
         try {
             System.out.println(cache.exists(key));
@@ -121,7 +141,11 @@ public class CacheDB implements Callable<Integer> {
 
     @Override
     public Integer call() throws Exception {
+        System.out.println("Welcome to Cache Controller!!");
+        System.out.println("Here you can create, update, remove, read keys and get values from a cache.");
+        System.out.println("");
         System.out.println("Commands: getAll, get, add, put, remove, size, exists");
+        System.out.println("Type 'help' to see the usage of each command.");
         return 0;
     }
 

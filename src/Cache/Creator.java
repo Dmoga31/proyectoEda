@@ -19,7 +19,7 @@ public class Creator {
             return newFile.createNewFile();
 
         } catch (IOException e) {
-            System.out.println("Exception occurred: " + e);
+            System.out.println("Cache.Exception occurred: " + e);
             return false;
         }
     }
@@ -104,7 +104,7 @@ public class Creator {
                 return false;
             }
         } catch (IOException e) {
-            System.out.println("Exception occurred: " + e);
+            System.out.println("Cache.Exception occurred: " + e);
             return false;
         }
     }

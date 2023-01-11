@@ -1,7 +1,7 @@
 package Cache;
 
-import Exception.DuplicatedKeyException;
-import Exception.KeyNotFoundException;
+import Cache.Exception.DuplicatedKeyException;
+import Cache.Exception.KeyNotFoundException;
 import Structure.TreeMap;
 import java.io.IOException;
 
@@ -12,7 +12,7 @@ public class ICache implements ICacheInterface {
 
     /**
      * Constructor of the class ICache
-     * @throws IOException
+     * @throws IOException if the cache directory does not exist.
      */
     public ICache() throws IOException {
         if(!creator.existFile(this.dirname)){
@@ -54,29 +54,11 @@ public class ICache implements ICacheInterface {
      * @return String with the value
      * @throws KeyNotFoundException if the key is not in the cache
      */
-    public String get(String key) throws KeyNotFoundException {
+    public String read(String key) throws KeyNotFoundException {
         if (!cache.contains(key)) {
             throw new KeyNotFoundException("Key not found");
         }
         return cache.get(key);
-    }
-
-    /**
-     * Returns the value of the key or the default value if the key is not found
-     * @param key Key to search.
-     * @param defaultValue Default value to return if the key is not found
-     * @return String
-     */
-    public String getOrDefault(String key, String defaultValue) {
-        try {
-            if (!cache.contains(key)) {
-                return defaultValue;
-            }
-            return cache.get(key);
-        } catch (KeyNotFoundException e) {
-            return defaultValue;
-        }
-
     }
 
     /**
@@ -89,23 +71,23 @@ public class ICache implements ICacheInterface {
         boolean fileExists = creator.existFile(getFileName(key));
 
         if (cacheContains && fileExists) {
-            System.out.println(key + " exists");
+            System.out.println(key + " exists in cache");
             return true;
         } else {
-            System.out.println(key + " does not exist");
+            System.out.println(key + " does not exist in cache");
             return false;
         }
     }
 
     /**
      * Updates the value of the key in the cache
-     * @param key Key to update
+     *
+     * @param key   Key to update
      * @param value New value
      */
-    public void put(String key, String value) throws IOException {
+    public void update(String key, String value) throws IOException {
         cache.put(key, value);
         String fileName = getFileName(key);
-
         if(creator.existFile(fileName)){
             creator.writeInFile(fileName, value);
         }
@@ -152,7 +134,7 @@ public class ICache implements ICacheInterface {
 
     /**
      * Returns the file name of the key in the cache
-     * @param file
+     * @param file Key to search
      * @return String
      */
     private String getFileName(String file) {

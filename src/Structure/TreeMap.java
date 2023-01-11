@@ -1,6 +1,6 @@
 package Structure;
 
-import Exception.KeyNotFoundException;
+import Cache.Exception.KeyNotFoundException;
 
 
 public class TreeMap<TKey extends Comparable<TKey>, TValue> {
