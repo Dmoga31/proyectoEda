@@ -32,8 +32,17 @@ public class Creator {
      */
     public static boolean createFolder(String folderName) {
         File newFolder = new File(folderName);
-        boolean folderCreated = newFolder.mkdir();
-        return  folderCreated;
+            boolean folderCreated = newFolder.mkdir();
+            if(folderCreated){
+                System.out.println("Folder created");
+                return true;
+            } else if (newFolder.exists()){
+                System.out.println("Folder already exists");
+                return false;
+            } else {
+                System.out.println("Folder not created");
+                return false;
+            }
     }
 
     /**
@@ -45,7 +54,7 @@ public class Creator {
         try {
             File file = new File(fileName);
             if (file.exists()) {
-                System.out.println("File deleted: " + file.delete());
+                System.out.println("File " + fileName + " deleted: " + file.delete());
             } else {
                 System.out.println("File not found");
             }
@@ -58,34 +67,45 @@ public class Creator {
      * Write a string in a file.
      *
      * @param fileName Name of the file to write.
-     * @param text  Content to write in the file.
+     * @param text     Content to write in the file.
+     * @return
      */
-    public static void writeInFile(String fileName, String text) throws IOException {
+    public static boolean writeInFile(String fileName, String text) throws IOException {
         File file = new File(fileName);
         Scanner sc = new Scanner(file);
         FileWriter fileWriter = new FileWriter(fileName);
-        fileWriter.write(text);
-        fileWriter.close();
+        if(file.exists()){
+            fileWriter.write(text);
+            fileWriter.close();
+            return true;
+        } else {
+            System.out.println("File not found");
+            return false;
+        }
     }
 
     /**
      * Creates a file in a folder.
      *
-     * @param fileName Name of the file to look for.
+     * @param fileName   Name of the file to look for.
      * @param folderName Name of the folder to look for.
+     * @return boolean
      */
-    public static void createFileIn(String fileName, String folderName){
+    public static boolean createFileIn(String fileName, String folderName){
         File folder = new File(folderName);
         File newFile = new File(folder + "\\" + fileName);
         try {
             boolean fileCreated = newFile.createNewFile();
             if (fileCreated) {
-                System.out.println("File: " + newFile.getName() + "created in: " + newFile.getParent());
+                System.out.println("File: " + newFile.getName() + " created in: " + newFile.getParent());
+                return true;
             } else {
                 System.out.println("File already exists.");
+                return false;
             }
         } catch (IOException e) {
             System.out.println("Exception occurred: " + e);
+            return false;
         }
     }
 
@@ -101,6 +121,7 @@ public class Creator {
 
     /**
      * Read all files in a folder.
+     *
      * @param folderName Name of the folder to look for.
      * @return Array of files names in the folder.
      */
@@ -116,17 +137,19 @@ public class Creator {
 
     /**
      * Read a file.
+     *
      * @param fileName Name of the file to read.
      * @return String with the content of the file.
-     * @throws IOException
+     * @throws IOException If file not found.
      */
-    public String readFile(String fileName) throws IOException {
+    public static String readFile(String fileName) throws IOException {
         File file = new File(fileName);
         Scanner sc = new Scanner(file);
         String fileContent = "";
         while (sc.hasNextLine()) {
             fileContent += sc.nextLine();
         }
+        sc.close();
         return fileContent;
     }
 }
