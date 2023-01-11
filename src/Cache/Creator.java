@@ -146,8 +146,12 @@ public class Creator {
         File file = new File(fileName);
         Scanner sc = new Scanner(file);
         String fileContent = "";
-        while (sc.hasNextLine()) {
-            fileContent += sc.nextLine();
+        if (file.exists()) {
+            while (sc.hasNextLine()) {
+                fileContent += sc.nextLine();
+            }
+        } else {
+            System.out.println("File not found");
         }
         sc.close();
         return fileContent;

@@ -63,7 +63,7 @@ public class ICache implements ICacheInterface {
 
     /**
      * Returns the value of the key or the default value if the key is not found
-     * @param key Key to search
+     * @param key Key to search.
      * @param defaultValue Default value to return if the key is not found
      * @return String
      */
@@ -81,7 +81,7 @@ public class ICache implements ICacheInterface {
 
     /**
      * Returns the file name of the key in the cache
-     * @param key
+     * @param key Key to search
      * @return boolean
      */
     public boolean exists(String key) {
@@ -91,14 +91,16 @@ public class ICache implements ICacheInterface {
         if (cacheContains && fileExists) {
             System.out.println(key + " exists");
             return true;
+        } else {
+            System.out.println(key + " does not exist");
+            return false;
         }
-        return false;
     }
 
     /**
      * Updates the value of the key in the cache
-     * @param key
-     * @param value
+     * @param key Key to update
+     * @param value New value
      */
     public void put(String key, String value) throws IOException {
         cache.put(key, value);
@@ -111,9 +113,9 @@ public class ICache implements ICacheInterface {
 
     /**
      * Adds a new key to the cache with the value
-     * @param key
-     * @param value
-     * @throws DuplicatedKeyException
+     * @param key Key to add
+     * @param value Value of the key
+     * @throws DuplicatedKeyException if the key is already in the cache
      */
     public void addNew(String key, String value) throws IOException {
         if (cache.contains(key)) {
@@ -135,7 +137,7 @@ public class ICache implements ICacheInterface {
             creator.deleteFile(getFileName(key));
             return true;
         } else {
-            System.out.println("Key not found");
+            System.out.println(key + " does not exist");
             return false;
         }
     }
